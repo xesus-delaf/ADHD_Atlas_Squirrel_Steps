@@ -1,104 +1,103 @@
-# 🧭 ADHD Atlas (Phase 1)
+# 🧭 ADHD Atlas
 
-> **AI-Powered Task Decomposition for Executive Dysfunction & Cognitive Overwhelm**
+> **AI-Powered Micro-Step Decomposer for Executive Dysfunction & Cognitive Overwhelm**
 
-ADHD Atlas receives an overwhelming task in free-form natural language and decomposes it into **3–4 hyper-concrete, physical micro-steps**, each taking **under 15 minutes**, returning structured and schema-validated JSON.
-
----
-
-## 🏗️ Architecture & Stack
-
-- **Backend**: Python 3.11+, FastAPI, Pydantic v2, Google GenAI SDK (`gemini-2.5-flash` / `gemini-1.5-flash`), `python-dotenv`, `uvicorn`.
-- **Frontend**: React 19, TypeScript, Tailwind CSS v4, Lucide Icons, Axios, Vite.
-- **AI Model**: Google Gemini Flash with strict JSON schema enforcement and automated 1-retry fallback.
+ADHD Atlas takes overwhelming, vaguely defined tasks and instantly transforms them into **3–4 hyper-concrete, physical micro-steps** under **15 minutes each**.
 
 ---
 
-## 🚀 Quickstart Guide (Running Locally)
+## ⚡ Tech Stack
+
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | React 19, TypeScript, Tailwind CSS v4, Lucide Icons, Vite |
+| **Backend** | Python 3.11+, FastAPI, Pydantic v2, Uvicorn |
+| **Mobile** | Android (Jetpack Compose, Hardware Keystore) |
+| **AI Engine** | Google Gemini (`gemini-2.5-flash` / `gemini-2.0-flash`) via Client-Side BYOK |
+
+---
+
+## 🔑 Bring Your Own Key (BYOK)
+
+ADHD Atlas is built with a **zero-knowledge, stateless backend**:
+
+- **No Server API Keys**: The backend `.env` does **not** store or require any Gemini API key.
+- **Client-Side Control**: You supply your own free key from [Google AI Studio](https://aistudio.google.com/app/apikey).
+- **Secure Per-Request Dispatch**: The key is stored exclusively on your device (`localStorage` in web, `EncryptedSharedPreferences` on Android) and attached per-call via the `X-Gemini-API-Key` header.
+
+---
+
+## 🚀 Quickstart (Local Development)
 
 ### 1. Backend Setup
 
-1. Open a terminal in the `backend` folder:
-   ```bash
-   cd backend
-   ```
+```bash
+cd backend
 
-2. Create and activate a Python virtual environment:
-   - **Windows (PowerShell)**:
-     ```powershell
-     python -m venv .venv
-     .\.venv\Scripts\Activate.ps1
-     ```
-   - **Linux / macOS**:
-     ```bash
-     python3 -m venv .venv
-     source .venv/bin/activate
-     ```
+# Create & activate virtual environment
+python -m venv .venv
+# Windows (PowerShell): .\.venv\Scripts\Activate.ps1
+# Linux / macOS:        source .venv/bin/activate
 
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Configure your Gemini API Key in `backend/.env`:
-   ```ini
-   GEMINI_API_KEY=your_actual_gemini_api_key_here
-   GEMINI_MODEL=gemini-2.5-flash
-   ENVIRONMENT=development
-   CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
-   ```
-   > 🔑 *You can generate a free Gemini API Key at [Google AI Studio](https://aistudio.google.com/app/apikey).*
-
-5. Start the FastAPI server:
-   ```bash
-   uvicorn app.main:app --reload --port 8000
-   ```
-   - API Docs: [http://localhost:8000/docs](http://localhost:8000/docs)
-   - Health Check: [http://localhost:8000/api/health](http://localhost:8000/api/health)
+# Install dependencies & start server
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+```
+- **API Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Health Check**: [http://localhost:8000/api/health](http://localhost:8000/api/health)
 
 ---
 
 ### 2. Frontend Setup
 
-1. Open a new terminal in the `frontend` folder:
-   ```bash
-   cd frontend
-   ```
+In a separate terminal:
 
-2. Install npm dependencies:
-   ```bash
-   npm install
-   ```
+```bash
+cd frontend
 
-3. Start the Vite development server:
-   ```bash
-   npm run dev
-   ```
-   - Open your browser at: [http://localhost:5173](http://localhost:5173)
+# Install dependencies & start dev server
+npm install
+npm run dev
+```
+- Open [http://localhost:5173](http://localhost:5173) in your browser.
+- Click the **🔑 Key Icon** in the top navigation bar.
+- Paste your Gemini API key and hit **Save**.
 
 ---
 
-## 🧪 Running Tests
+### 3. Android App (Optional)
 
-### Backend Unit & Integration Tests
-Inside the `backend/` directory with virtual environment activated:
+1. Open `ADHD_Atlas/android` in **Android Studio**.
+2. Sync Gradle dependencies.
+3. Run on an emulator or physical device running **Android 8.0+ (API 26+)**.
+
+---
+
+## 🧪 Testing & Verification
+
 ```bash
+# Backend test suite (Schema validation, step boundaries, fallback logic)
+cd backend
 pytest
-```
-Runs 8 automated tests covering Pydantic schema validation, 3–4 step bounds, 15-minute limits, JSON stripping, and FastAPI endpoint routes.
 
-### Frontend TypeScript & Build Verification
-Inside the `frontend/` directory:
-```bash
+# Frontend build & TypeScript validation
+cd frontend
 npm run build
 ```
 
 ---
 
-## 📋 API Specification
+## 📡 API Specification
 
 ### `POST /api/breakdown`
-Decomposes an overwhelming task into actionable steps.
+
+Breaks down an overwhelming task into actionable, concrete physical steps.
+
+**Headers:**
+```http
+Content-Type: application/json
+X-Gemini-API-Key: <your_gemini_api_key>
+```
 
 **Request Body:**
 ```json
@@ -107,7 +106,7 @@ Decomposes an overwhelming task into actionable steps.
 }
 ```
 
-**Response (200 OK):**
+**Response (`200 OK`):**
 ```json
 {
   "original_task": "My home office is chaotic and I can't start studying for my exam.",
@@ -116,13 +115,13 @@ Decomposes an overwhelming task into actionable steps.
     {
       "step_number": 1,
       "title": "Clear surface items into a single container",
-      "description": "Pick up loose items, coffee mugs, and garbage on your desk and place them in a laundry basket or sink.",
+      "description": "Pick up loose items, coffee mugs, and trash from the desk and place them in a laundry basket.",
       "estimated_minutes": 4
     },
     {
       "step_number": 2,
-      "title": "Open syllabus and create a blank summary doc",
-      "description": "Turn on your computer, open your syllabus tab, and create a blank document titled 'Exam Notes'.",
+      "title": "Open syllabus and create a blank notes document",
+      "description": "Turn on computer, open syllabus tab, and create a blank doc titled 'Exam Notes'.",
       "estimated_minutes": 5
     },
     {
@@ -142,43 +141,12 @@ Decomposes an overwhelming task into actionable steps.
 
 ```
 ADHD_Atlas/
-├── backend/
-│   ├── app/
-│   │   ├── core/
-│   │   │   ├── config.py         # Settings & environment validation
-│   │   │   └── prompts.py        # System prompt, constraints & few-shot examples
-│   │   ├── schemas/
-│   │   │   └── task.py           # Pydantic schemas (TaskBreakdownRequest, TaskStep, TaskBreakdownResponse)
-│   │   ├── services/
-│   │   │   └── gemini_service.py # Gemini Flash client with structured schema & retry fallback
-│   │   ├── routers/
-│   │   │   └── breakdown.py      # POST /api/breakdown & GET /api/health
-│   │   └── main.py               # FastAPI entry point & CORS
-│   ├── tests/
-│   │   ├── test_breakdown.py     # Schema and logic tests
-│   │   └── test_api_endpoints.py # Integration test suite
-│   ├── .env.example
-│   ├── pytest.ini
-│   └── requirements.txt
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── Header.tsx            # App bar with status pill
-│   │   │   ├── TaskInput.tsx         # Textarea, sample triggers, character counter
-│   │   │   ├── TaskCard.tsx          # Step card with local check state and time badge
-│   │   │   ├── TaskBreakdownList.tsx # Progress bar and step list
-│   │   │   ├── LoadingState.tsx      # Low-anxiety animated loader
-│   │   │   └── ErrorAlert.tsx        # Friendly retry alert
-│   │   ├── services/
-│   │   │   └── api.ts                # Axios backend API client
-│   │   ├── types/
-│   │   │   └── task.ts               # TypeScript data definitions
-│   │   ├── App.tsx                   # Main layout and state management
-│   │   ├── index.css                 # Tailwind v4 styles & ambient glows
-│   │   └── main.tsx
-│   ├── index.html
-│   ├── package.json
-│   ├── tsconfig.json
-│   └── vite.config.ts
-└── README.md
+├── backend/          # FastAPI API service
+│   ├── app/          # Routers, schemas, prompts, and Gemini client
+│   └── tests/        # Automated pytest test suite
+├── frontend/         # React + Vite web client
+│   ├── src/          # Components, state hooks, and BYOK modal
+│   └── package.json
+└── android/          # Native Jetpack Compose mobile app
+    └── app/src/main/ # Scoped screen protection & Keystore vault
 ```
